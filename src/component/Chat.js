@@ -37,6 +37,9 @@ const Chat = props => {
   const [textField, setTextField] = useState("");
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
+  const [data, setData] = useState({
+    count: 0,
+  })
 
   //variable
   const classes = useStyles();
@@ -52,6 +55,16 @@ const Chat = props => {
   socket.on("user-connected", name => {
     setMessage(`${name} connected`);
   });
+
+  //socket user disconnected
+  socket.on("user-disconnected", name => {
+    setMessage(`${name} disconnected`);
+  })
+
+  //number of people in the chat
+  socket.on("number-users-online", count => {
+    setData({...data, ['count']: count});
+  })
 
   //functions
   const scrollToBottom = () => {
