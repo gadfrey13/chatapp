@@ -31,7 +31,6 @@ const User = props => {
 
 
   const checkUserNameUnique = (callback) => {
-      console.log("Hey check");
       socket.emit('check-unique-user', user);
       socket.on('unique-user', bool => {
           if(bool){
