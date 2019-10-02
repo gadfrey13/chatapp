@@ -14,7 +14,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
 import Message from "../component/Message/Message";
 import zIndex from "@material-ui/core/styles/zIndex";
-
+import UsersOnline from "../component/UsersOnline/UsersOnline";
 const useStyles = makeStyles(theme => ({
   dimension: {
     height: "800px",
@@ -54,6 +54,7 @@ const Chat = props => {
   const [textField, setTextField] = useState("");
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
+  const [usersOnline, setUsersOnline] = useState({});
   const [data, setData] = useState({
     count: 0
   });
@@ -82,6 +83,18 @@ const Chat = props => {
   socket.on("users-online", count => {
     setData({ ...data, ["count"]: count });
   });
+
+  //user list connected to the server
+  socket.on("users-names", obj => {
+    setUsersOnline(obj);
+  })
+
+ //users disconnect romove user from the object
+ socket.on("disconnect-user-key", key => {
+    let copyUsersOnline = Object.assign({},usersOnline);
+    delete copyUsersOnline[key];
+    setUsersOnline(copyUsersOnline);
+ })
 
   //functions
   const scrollToBottom = () => {
@@ -153,7 +166,9 @@ const Chat = props => {
             <Grid item>
               <Paper className={classes.users}>
                 <Typography>Users {data.count}</Typography>
-                <Scroll></Scroll>
+                <Scroll>
+                  <UsersOnline usersOnline={usersOnline} user={user}/>
+                </Scroll>
               </Paper>
             </Grid>
             <Grid item>
